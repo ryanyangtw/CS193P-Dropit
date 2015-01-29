@@ -7,7 +7,6 @@
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
                 <viewController id="vXZ-lx-hvc" customClass="ViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
@@ -17,7 +16,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UnO-EB-Fco">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UnO-EB-Fco" customClass="BezierPathView">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" red="0.0" green="1" blue="1" alpha="0.12" colorSpace="calibratedRGB"/>
                                 <gestureRecognizers/>
@@ -26,6 +25,7 @@
                                 </variation>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="nG8-KP-yBS" appends="YES" id="ri0-jW-CBd"/>
+                                    <outletCollection property="gestureRecognizers" destination="1pY-8V-Az0" appends="YES" id="CRD-tB-2wu"/>
                                 </connections>
                             </view>
                         </subviews>
@@ -45,11 +45,17 @@
                         <outlet property="gameView" destination="UnO-EB-Fco" id="wUI-HQ-DyT"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="nG8-KP-yBS">
                     <connections>
                         <action selector="tap:" destination="vXZ-lx-hvc" id="dto-iR-UI3"/>
                     </connections>
                 </tapGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="1pY-8V-Az0">
+                    <connections>
+                        <action selector="pan:" destination="vXZ-lx-hvc" id="uWZ-7k-4MH"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="399" y="373"/>
         </scene>

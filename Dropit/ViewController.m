@@ -8,13 +8,16 @@
 
 #import "ViewController.h"
 #import "DropitBehavior.h"
+#import "BezierPathView.h"
 
 @interface ViewController () <UIDynamicAnimatorDelegate>
-@property (weak, nonatomic) IBOutlet UIView *gameView;
+@property (weak, nonatomic) IBOutlet BezierPathView *gameView;
 @property (strong, nonatomic) UIDynamicAnimator *animator;
 //@property (strong, nonatomic) UIGravityBehavior *gravity;
 //@property (strong, nonatomic) UICollisionBehavior *collider;
 @property (strong, nonatomic) DropitBehavior *dropitBehavior;
+@property (strong, nonatomic) UIAttachmentBehavior *attachment;
+@property (strong, nonatomic) UIView *droppingView;
 
 //@property (weak, nonatomic) UIView *lastblock;
 
@@ -33,6 +36,7 @@ static const CGSize DROP_SIZE = { 40, 40 };
         _animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.gameView];
         
         //delegate is an object that going to find out when the animator stops and when it start up again
+        //Setting delegate to self. This lise is very important.
         _animator.delegate = self;
     }
     return _animator;
@@ -112,6 +116,41 @@ static const CGSize DROP_SIZE = { 40, 40 };
 }
 
 
+- (IBAction)pan:(UIPanGestureRecognizer *)sender {
+    
+    CGPoint gesturePoint = [sender locationInView:self.gameView];
+    
+    //NSLog(@"gesturePoint x: %f", gesturePoint.x);
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        [self attachDroppingViewToPoint:gesturePoint];
+    } else if (sender.state == UIGestureRecognizerStateChanged) {
+        self.attachment.anchorPoint = gesturePoint;
+        //self.attachment.anchorPoint = CGPointMake(self.gameView.bounds.size.width-100, 60);
+    } else if (sender.state == UIGestureRecognizerStateEnded) {
+        [self.animator removeBehavior:self.attachment];
+        self.gameView.path = nil;
+    }
+    
+}
+
+- (void)attachDroppingViewToPoint:(CGPoint)anchorPoint {
+    if (self.droppingView) {
+        self.attachment = [[UIAttachmentBehavior alloc] initWithItem:self.droppingView attachedToAnchor:anchorPoint];
+        
+        // We will use local variavle in action. And we will make self.droppingView point to nil below
+        UIView *droppingView = self.droppingView;
+        __weak ViewController *weakSelf = self;
+        self.attachment.action = ^{
+            UIBezierPath *path = [[UIBezierPath alloc] init];
+            [path moveToPoint:weakSelf.attachment.anchorPoint];
+            [path addLineToPoint:droppingView.center];
+            weakSelf.gameView.path = path;
+        };
+        self.droppingView = nil;
+        [self.animator addBehavior:self.attachment];
+        
+    }
+}
 
 - (void)drop {
     CGRect frame;
@@ -126,6 +165,8 @@ static const CGSize DROP_SIZE = { 40, 40 };
    
     //[self.collider addItem:dropView];
     //[self.gravity addItem:dropView];
+    
+    self.droppingView = dropView;
     [self.dropitBehavior addItem:dropView];
 
     
